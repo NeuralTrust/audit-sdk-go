@@ -1,6 +1,6 @@
 # Audit SDK Go
 
-A Go SDK for publishing audit events to Kafka. Designed for use with TrustGate and TrustGate-EE.
+A Go SDK for publishing audit events to Kafka. Designed for use with Golang Projects.
 
 ## Version
 
