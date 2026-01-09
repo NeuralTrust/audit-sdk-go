@@ -1,7 +1,6 @@
 package audit
 
 import (
-	"os"
 	"testing"
 	"time"
 
@@ -23,10 +22,8 @@ func TestConfig_SetDefaults(t *testing.T) {
 }
 
 func TestConfig_SetDefaults_FromEnv(t *testing.T) {
-	os.Setenv(EnvAuditEventsTopic, "custom_events")
-	os.Setenv(EnvAuditLogsIngestTopic, "custom_logs")
-	defer os.Unsetenv(EnvAuditEventsTopic)
-	defer os.Unsetenv(EnvAuditLogsIngestTopic)
+	t.Setenv(EnvAuditEventsTopic, "custom_events")
+	t.Setenv(EnvAuditLogsIngestTopic, "custom_logs")
 
 	cfg := &Config{}
 	cfg.setDefaults()
@@ -36,8 +33,7 @@ func TestConfig_SetDefaults_FromEnv(t *testing.T) {
 }
 
 func TestConfig_SetDefaults_ConfigOverridesEnv(t *testing.T) {
-	os.Setenv(EnvAuditEventsTopic, "env_events")
-	defer os.Unsetenv(EnvAuditEventsTopic)
+	t.Setenv(EnvAuditEventsTopic, "env_events")
 
 	cfg := &Config{
 		AuditEventsTopic: "config_events",
@@ -101,8 +97,7 @@ func TestResolveValue(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.envValue != "" {
-				os.Setenv(tt.envKey, tt.envValue)
-				defer os.Unsetenv(tt.envKey)
+				t.Setenv(tt.envKey, tt.envValue)
 			}
 
 			result := resolveValue(tt.configValue, tt.envKey, tt.defaultValue)
@@ -110,4 +105,3 @@ func TestResolveValue(t *testing.T) {
 		})
 	}
 }
-
