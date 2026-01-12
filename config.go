@@ -13,6 +13,15 @@ const (
 	EnvAuditLogsIngestTopic = "AUDIT_LOGS_INGEST_TOPIC"
 )
 
+type LogLevel string
+
+const (
+	LogLevelDebug LogLevel = "debug"
+	LogLevelInfo  LogLevel = "info"
+	LogLevelWarn  LogLevel = "warn"
+	LogLevelError LogLevel = "error"
+)
+
 type Config struct {
 	Brokers              []string
 	AuditEventsTopic     string
@@ -28,6 +37,7 @@ type Config struct {
 	TopicReplication     int
 	TLS                  *TLSConfig
 	SASL                 *SASLConfig
+	LogLevel             LogLevel
 }
 
 type TLSConfig struct {
@@ -67,6 +77,9 @@ func (c *Config) setDefaults() {
 	if c.RequiredAcks == 0 {
 		c.RequiredAcks = 1
 	}
+	if c.LogLevel == "" {
+		c.LogLevel = LogLevelInfo
+	}
 }
 
 func resolveValue(configValue, envKey, defaultValue string) string {
@@ -85,4 +98,5 @@ func (c *Config) validate() error {
 	}
 	return nil
 }
+
 

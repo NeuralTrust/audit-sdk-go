@@ -2,6 +2,7 @@ package audit
 
 import (
 	"encoding/json"
+	"log/slog"
 	"sync"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 )
 
 type Client interface {
-	Emit(event Event)
+	Emit(event Event) error
 	Close() error
 }
 
@@ -20,6 +21,7 @@ type client struct {
 	topics   []string
 	closed   bool
 	mu       sync.RWMutex
+	logger   *slog.Logger
 }
 
 func New(cfg *Config) (Client, error) {
@@ -80,29 +82,40 @@ func New(cfg *Config) (Client, error) {
 		config:   cfg,
 		producer: producer,
 		topics:   topics,
+		logger:   newLogger(cfg.LogLevel),
 	}, nil
 }
 
-func (c *client) Emit(event Event) {
+func (c *client) Emit(event Event) error {
 	c.mu.RLock()
 	if c.closed {
 		c.mu.RUnlock()
-		return
+		return nil
 	}
 	c.mu.RUnlock()
 
 	if err := c.validateEvent(&event); err != nil {
-		return
+		return err
 	}
 
 	c.enrichEvent(&event)
 
 	data, err := json.Marshal(event)
 	if err != nil {
-		return
+		return err
 	}
 
+	c.logger.Debug("emitting audit event",
+		slog.String("event_id", event.ID),
+		slog.String("team_id", event.TeamID),
+		slog.String("event_type", event.Event.Type),
+		slog.String("category", event.Event.Category),
+		slog.Any("target", event.Target),
+		slog.Any("payload", string(data)),
+	)
+
 	c.producer.ProduceAsync(c.topics, []byte(event.TeamID), data)
+	return nil
 }
 
 func (c *client) Close() error {

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
 type Config struct {
@@ -170,4 +170,5 @@ func (p *Producer) Close() error {
 	p.kafkaProducer.Close()
 	return nil
 }
+
 

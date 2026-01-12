@@ -1,12 +1,18 @@
 package audit
 
 import (
+	"log/slog"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func testLogger() *slog.Logger {
+	return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelError}))
+}
 
 type mockProducer struct {
 	producedMessages []producedMessage
@@ -47,6 +53,7 @@ func TestClient_Emit_Success(t *testing.T) {
 		},
 		producer: mock,
 		topics:   []string{"events", "logs"},
+		logger:   testLogger(),
 	}
 
 	event := Event{
@@ -55,7 +62,7 @@ func TestClient_Emit_Success(t *testing.T) {
 			Type:     "test.event",
 			Category: "test",
 		},
-		Actor: Actor{
+		Actor: &Actor{
 			ID:   "user-1",
 			Type: ActorTypeUser,
 		},
@@ -76,6 +83,7 @@ func TestClient_Emit_EnrichesEvent(t *testing.T) {
 		config:   &Config{},
 		producer: mock,
 		topics:   []string{"topic1"},
+		logger:   testLogger(),
 	}
 
 	event := Event{
@@ -101,6 +109,7 @@ func TestClient_Emit_EmptyTeamID_DoesNotProduce(t *testing.T) {
 		config:   &Config{},
 		producer: mock,
 		topics:   []string{"topic1"},
+		logger:   testLogger(),
 	}
 
 	event := Event{
@@ -121,6 +130,7 @@ func TestClient_Emit_EmptyEventType_DoesNotProduce(t *testing.T) {
 		config:   &Config{},
 		producer: mock,
 		topics:   []string{"topic1"},
+		logger:   testLogger(),
 	}
 
 	event := Event{
@@ -142,6 +152,7 @@ func TestClient_Emit_WhenClosed_DoesNotProduce(t *testing.T) {
 		producer: mock,
 		topics:   []string{"topic1"},
 		closed:   true,
+		logger:   testLogger(),
 	}
 
 	event := Event{
@@ -259,4 +270,5 @@ func TestEnrichEvent_PreservesExistingValues(t *testing.T) {
 	assert.Equal(t, "existing-id", event.ID)
 	assert.Equal(t, existingTime, event.Timestamp)
 }
+
 
