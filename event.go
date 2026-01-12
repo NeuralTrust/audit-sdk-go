@@ -18,11 +18,11 @@ type Event struct {
 	Timestamp time.Time `json:"timestamp"`
 	TeamID    string    `json:"teamId"`
 	Event     EventInfo `json:"event"`
-	Actor     Actor     `json:"actor"`
 	Target    Target    `json:"target"`
-	Context   Context   `json:"context"`
+	Actor     *Actor    `json:"actor"`
+	Context   *Context  `json:"context"`
 	Changes   *Changes  `json:"changes,omitempty"`
-	Metadata  Metadata  `json:"metadata,omitempty"`
+	Metadata  *Metadata `json:"metadata,omitempty"`
 }
 
 type EventInfo struct {
@@ -58,4 +58,3 @@ type Changes struct {
 }
 
 type Metadata map[string]interface{}
-
