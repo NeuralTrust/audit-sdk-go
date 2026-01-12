@@ -8,3 +8,4 @@ var (
 	ErrEmptyEventType = errors.New("audit: event type is required")
 )
 
+

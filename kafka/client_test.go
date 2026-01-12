@@ -178,3 +178,4 @@ func TestBuildKafkaConfig_DisabledTLS(t *testing.T) {
 	assert.Equal(t, "not_set", caLocation)
 }
 
+
