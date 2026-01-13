@@ -251,7 +251,7 @@ func TestEnrichEvent(t *testing.T) {
 	assert.Equal(t, Version, event.Version)
 	assert.NotEmpty(t, event.ID)
 	assert.False(t, event.Timestamp.IsZero())
-	assert.WithinDuration(t, time.Now().UTC(), event.Timestamp, time.Second)
+	assert.WithinDuration(t, time.Now().UTC(), event.Timestamp.Time, time.Second)
 }
 
 func TestEnrichEvent_PreservesExistingValues(t *testing.T) {
@@ -260,7 +260,7 @@ func TestEnrichEvent_PreservesExistingValues(t *testing.T) {
 	existingTime := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 	event := Event{
 		ID:        "existing-id",
-		Timestamp: existingTime,
+		Timestamp: Timestamp{Time: existingTime},
 		TeamID:    "team-123",
 	}
 
@@ -268,7 +268,7 @@ func TestEnrichEvent_PreservesExistingValues(t *testing.T) {
 
 	assert.Equal(t, Version, event.Version)
 	assert.Equal(t, "existing-id", event.ID)
-	assert.Equal(t, existingTime, event.Timestamp)
+	assert.Equal(t, existingTime, event.Timestamp.Time)
 }
 
 

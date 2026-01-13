@@ -1,8 +1,14 @@
 package audit
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
-const Version = "1.0"
+const (
+	Version         = "1.0"
+	timestampFormat = "2006-01-02 15:04:05.000000"
+)
 
 type ActorType string
 
@@ -15,7 +21,7 @@ const (
 type Event struct {
 	Version   string    `json:"version"`
 	ID        string    `json:"id"`
-	Timestamp time.Time `json:"timestamp"`
+	Timestamp Timestamp `json:"timestamp"`
 	TeamID    string    `json:"teamId"`
 	Event     EventInfo `json:"event"`
 	Target    Target    `json:"target"`
@@ -58,3 +64,24 @@ type Changes struct {
 }
 
 type Metadata map[string]interface{}
+
+type Timestamp struct {
+	time.Time
+}
+
+func (t Timestamp) MarshalJSON() ([]byte, error) {
+	return json.Marshal(t.Time.Format(timestampFormat))
+}
+
+func (t *Timestamp) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+	parsed, err := time.Parse(timestampFormat, s)
+	if err != nil {
+		return err
+	}
+	t.Time = parsed
+	return nil
+}
