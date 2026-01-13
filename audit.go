@@ -148,7 +148,7 @@ func (c *client) enrichEvent(event *Event) {
 	}
 
 	if event.Timestamp.IsZero() {
-		event.Timestamp = time.Now().UTC()
+		event.Timestamp = Timestamp{Time: time.Now().UTC()}
 	}
 }
 
