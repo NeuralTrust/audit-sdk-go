@@ -22,7 +22,7 @@ type Event struct {
 	Version   string    `json:"version"`
 	ID        string    `json:"id"`
 	Timestamp Timestamp `json:"timestamp"`
-	TeamID    string    `json:"teamId"`
+	TeamID    string    `json:"team_id"`
 	Event     EventInfo `json:"event"`
 	Target    Target    `json:"target"`
 	Actor     *Actor    `json:"actor"`
@@ -36,7 +36,7 @@ type EventInfo struct {
 	Category     string `json:"category"`
 	Description  string `json:"description"`
 	Status       string `json:"status"`
-	ErrorMessage string `json:"errorMessage,omitempty"`
+	ErrorMessage string `json:"error_message,omitempty"`
 }
 
 type Actor struct {
@@ -52,10 +52,10 @@ type Target struct {
 }
 
 type Context struct {
-	IPAddress string `json:"ipAddress,omitempty"`
-	UserAgent string `json:"userAgent,omitempty"`
-	SessionID string `json:"sessionId,omitempty"`
-	RequestID string `json:"requestId,omitempty"`
+	IPAddress string `json:"ip_address,omitempty"`
+	UserAgent string `json:"user_agent,omitempty"`
+	SessionID string `json:"session_id,omitempty"`
+	RequestID string `json:"request_id,omitempty"`
 }
 
 type Changes struct {
